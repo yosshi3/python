@@ -27,7 +27,7 @@ def im2col(image, flt_h, flt_w, out_h, out_w):
             w_lim = w + flt_w
             tmp = img[h:h_lim, w:w_lim]
             tmp2 = tmp.reshape(-1)
-            tmp3 = h * out_w+w
+            tmp3 = h * out_w + w
             cols[:, tmp3] = tmp2
 
     return cols

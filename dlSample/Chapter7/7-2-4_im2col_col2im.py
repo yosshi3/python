@@ -18,17 +18,18 @@ def im2col(images, flt_h, flt_w, out_h, out_w, stride, pad):
 
     pad_width = [(0, 0), (0, 0), (pad, pad), (pad, pad)]
     img_pad = np.pad(images, pad_width, "constant")
-    print("img_pad = " + str(img_pad))
+    print("img_pad = \n" + str(img_pad))
     
     cols = np.zeros((n_bt, n_ch, flt_h, flt_w, out_h, out_w), dtype=np.int16)
 
     for h in range(flt_h):
         h_lim = h + stride*out_h
         for w in range(flt_w):
-            w_lim = w + stride*out_w
-            cols[:, :, h, w, :, :] = img_pad[: , : , h:h_lim:stride, w:w_lim:stride]
-            print("img_pad[] = " + str(img_pad[: , : , h:h_lim:stride, w:w_lim:stride]))
-            print("cols = " + str(cols))
+            w_lim = w + stride * out_w
+            tmp = img_pad[: , : , h:h_lim:stride, w:w_lim:stride]
+            cols[:, :, h, w, :, :] = tmp
+            print("img_pad[] = \n" + str(tmp))
+            print("cols = \n" + str(cols))
 
     cols = cols.transpose(1, 2, 3, 0, 4, 5)
     cols = cols.reshape(n_ch * flt_h * flt_w , n_bt * out_h * out_w)
@@ -44,4 +45,15 @@ img = np.array([[[[1, 2, 3, 4],
 cols = im2col(img, 2, 2, 5, 5, 1, 1)
 print("cols = im2col(img, 2, 2, 3, 3, 1, 1)\n" + str(cols))
 
+img = np.arange(1,33)
+img = img.reshape(1,2,4,4)
+print("img =\n",img)
+cols = im2col(img, 2, 2, 5, 5, 1, 1)
+print("cols = im2col(img, 2, 2, 3, 3, 1, 1)\n" + str(cols))
+
+
+img = img.reshape(2,1,4,4)
+print("img =\n",img)
+cols = im2col(img, 2, 2, 5, 5, 1, 1)
+print("cols = im2col(img, 2, 2, 3, 3, 1, 1)\n" + str(cols))
 

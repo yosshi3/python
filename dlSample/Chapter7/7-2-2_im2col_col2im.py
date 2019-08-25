@@ -23,7 +23,8 @@ def im2col(image, flt_h, flt_w, out_h, out_w):
         for w in range(flt_w):  # フィルター横でループ
             w_lim = w + out_w
 #            cols[h, w, :, :] = img[h:h_lim, w:w_lim] # colsのx行目を生成する
-            cols[h * (flt_w) + w, :, :] = img[h:h_lim, w:w_lim]  # colsのx行目を生成する
+            tmp = img[h:h_lim, w:w_lim]
+            cols[h * (flt_w) + w, :, :] = tmp  # colsのx行目を生成する
             print("h = " + str(h) + ": w = " + str(w) + "\n")
             print(str(cols))
             print('---')
