@@ -25,7 +25,7 @@ print("digits.data[0].reshape(8,8):" + str(digits.data[0].reshape(8, 8)))
 plt.imshow(digits.data[0].reshape(8, 8), cmap="gray")
 plt.show()
 
-
+    
 # %%
 print(digits.target.shape)
 print(len(digits.target))

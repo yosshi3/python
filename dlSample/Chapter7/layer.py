@@ -11,6 +11,9 @@ class ConvLayer:
     # stride:ストライド幅, pad:パディング幅
     # y_ch:出力チャンネル数, y_h:出力高さ, y_w:出力幅
 
+    # x_ch:入力チャンネル数, x_h:入力画像高さ, x_w:入力画像幅
+    # n_flt:フィルタ数, flt_h:フィルタ高さ, flt_w:フィルタ幅
+    # stride:ストライド幅, pad:パディング幅
     def __init__(self, x_ch, x_h, x_w, n_flt, flt_h, flt_w, stride, pad):
 
         # パラメータをまとめる
@@ -167,3 +170,7 @@ class OutputLayer(BaseLayer):
         self.grad_b = np.sum(delta, axis=0)
 
         self.grad_x = np.dot(delta, self.w.T)
+
+
+
+# if __name__ == '__main__':
