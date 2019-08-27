@@ -21,10 +21,11 @@ class ConvLayer:
 
         # フィルタとバイアスの初期値
         self.w = wb_width * np.random.randn(n_flt, x_ch, flt_h, flt_w)
+        # バイアスの初期値（1,フィルタ数）
         self.b = wb_width * np.random.randn(1, n_flt)
 
         # 出力画像のサイズ
-        self.y_ch = n_flt  # 出力チャンネル数
+        self.y_ch = n_flt  # 出力チャンネル数 ★★★★★★
         self.y_h = (x_h - flt_h + 2*pad) // stride + 1  # 出力高さ
         self.y_w = (x_w - flt_w + 2*pad) // stride + 1  # 出力幅
 
@@ -38,13 +39,28 @@ class ConvLayer:
         y_ch, y_h, y_w = self.y_ch, self.y_h, self.y_w
 
         # 入力画像とフィルタを行列に変換
+        # im2colsで行列形式に変換
         self.cols = im2col(x, flt_h, flt_w, y_h, y_w, stride, pad)
-        self.w_col = self.w.reshape(n_flt, x_ch*flt_h*flt_w)
+        # フィルタを行列形式に変換
+        self.w_col = self.w.reshape(n_flt, x_ch * flt_h * flt_w)
 
         # 出力の計算: 行列積、バイアスの加算、活性化関数
+        # フィルタとフィルタ該当画像を掛けて、フィルタ後の結果にchannelを含めて
+        # self.w_col = n_flt  ,  x_ch * flt_h * flt_w
+        # self.cols = x_ch * flt_h * flt_w  ,  n_bt * y_h * y_w
+        # np.dot() = n_flt  ,  n_bt * y_h * y_w
+        # np.dot().T = n_bt * y_h * y_w  ,  n_flt
+        # self.b = 1  ,  n_flt
+        # u = n_bt * y_h * y_w  ,  n_flt
         u = np.dot(self.w_col, self.cols).T + self.b
+        # u = n_bt, y_h, y_w, y_ch reshape()
+        # u = n_bt, y_ch, y_h, y_w transpose()
         self.u = u.reshape(n_bt, y_h, y_w, y_ch).transpose(0, 3, 1, 2)
+        # y = n_bt, y_ch, y_h, y_w
+        print("forward()")
+        print("  self.u", self.u.shape)
         self.y = np.where(self.u <= 0, 0, self.u)
+        print("  self.y", self.y.shape)
 
     def backward(self, grad_y):
         n_bt = grad_y.shape[0]
@@ -53,7 +69,7 @@ class ConvLayer:
 
         # delta
         delta = grad_y * np.where(self.u <= 0, 0, 1)
-        delta = delta.transpose(0,2,3,1).reshape(n_bt*y_h*y_w, y_ch)
+        delta = delta.transpose(0,2,3,1).reshape(n_bt * y_h * y_w, y_ch)
 
         # フィルタとバイアスの勾配
         grad_w = np.dot(self.cols, delta)
@@ -71,6 +87,11 @@ class ConvLayer:
 
         self.h_b += self.grad_b * self.grad_b
         self.b -= eta / np.sqrt(self.h_b) * self.grad_b
+        print("update()")
+        print("  self.grad_b.shape", self.grad_b.shape)
+        print("  self.grad_b", self.grad_b)
+        print("  self.b.shape", self.b.shape)
+        print("  self.b", self.b)
 
 # -- プーリング層 --
 class PoolingLayer:

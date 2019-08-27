@@ -36,6 +36,14 @@ print(c)
 print(np.shape(c))
 print(np.size(c))
 
+['a1_a1','a1_a2'],[a2_a1	a2_a2
+['a1_b1','a1_b2]		a2_b1	a2_b2
+				
+'b1_a1','b1_a2		b2_a1	b2_a2
+'b1_b1','b1_b2		b2_b1	b2_b2
+
+
+
 
 # %%
 d = [[1, 2], [3, 4], [5, 6]]  # (3, 2)
