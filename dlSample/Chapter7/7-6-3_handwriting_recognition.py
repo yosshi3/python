@@ -8,7 +8,6 @@ except:
 	pass
 # ## 7.6 畳み込みニューラルネットワークの実践
 # ### 7.6.3 CNNのコード
-import sys
 
 get_ipython().run_line_magic('matplotlib', 'inline')
 
@@ -140,8 +139,7 @@ def forward_sample(input_dt, correct_dt, n_sample):
     input_rand = input_dt[index_rand, :]
     correct_rand = correct_dt[index_rand, :]
     forward_propagation(input_rand)
-    return input_rand, correct_rand  # 入力データのランダムサンプリング、正解データのランダムサンプリング
-
+    return input_rand, correct_rand  # 入力データ、正解データのランダムサンプリング
 
 # -- 誤差の記録用 --
 train_error_x = []
@@ -192,7 +190,6 @@ for i in range(epoch):
         forward_propagation(x)
         backpropagation(t)
         uppdate_wb()
-
 
 # -- 誤差の記録をグラフ表示 --
 plt.figure(figsize=(8,5),dpi=100)

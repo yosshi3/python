@@ -117,7 +117,7 @@ class PoolingLayer:
 
         # 入力画像を行列に変換
         cols = im2col(x, pool, pool, y_h, y_w, pool, pad)
-        cols = cols.T.reshape(n_bt*y_h*y_w*x_ch, pool*pool)
+        cols = cols.T.reshape(n_bt * y_h * y_w * x_ch, pool * pool)
 
         # 出力の計算: Maxプーリング
         y = np.max(cols, axis=1)
@@ -125,21 +125,35 @@ class PoolingLayer:
 
         # 最大値のインデックスを保存
         self.max_index = np.argmax(cols, axis=1)
+        print("forward()")
+        print("  y", y.shape)
+        print("  self.max_index", self.max_index.shape)
 
     def backward(self, grad_y):
         n_bt = grad_y.shape[0]
         x_ch, x_h, x_w, pool, pad = self.params
         y_ch, y_h, y_w = self.y_ch, self.y_h, self.y_w
 
+        print("backward()")
         # 出力の勾配の軸を入れ替え
         grad_y = grad_y.transpose(0, 2, 3, 1)
+        print("  grad_y", grad_y.shape)
 
         # 行列を作成し、各列の最大値であった要素にのみ出力の勾配を入れる
-        grad_cols = np.zeros((pool*pool, grad_y.size))
-        grad_cols[self.max_index.reshape(-1), np.arange(grad_y.size)] = grad_y.reshape(-1)
+        grad_cols = np.zeros((pool * pool, grad_y.size))
+        print("  grad_cols", grad_cols.shape)
+        tmp1 = self.max_index.reshape(-1)
+        print("  tmp1", tmp1.shape)
+        tmp2 = np.arange(grad_y.size)
+        print("  tmp2", tmp2.shape)
+        grad_cols[tmp1, tmp2] = grad_y.reshape(-1)
+        print("  grad_cols", grad_cols.shape)
         grad_cols = grad_cols.reshape(pool, pool, n_bt, y_h, y_w, y_ch)
+        print("  grad_cols", grad_cols.shape)
         grad_cols = grad_cols.transpose(5,0,1,2,3,4)
+        print("  grad_cols", grad_cols.shape)
         grad_cols = grad_cols.reshape( y_ch*pool*pool, n_bt*y_h*y_w)
+        print("  grad_cols", grad_cols.shape)
 
         # 入力の勾配
         x_shape = (n_bt, x_ch, x_h, x_w)
